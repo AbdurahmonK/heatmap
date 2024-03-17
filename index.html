@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Leaflet Heatmap Layer Plugin</title>
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+      body {
+        font-family: sans-serif;
+      }
+      body * {
+        font-weight: 200;
+      }
+      h1 {
+        position: absolute;
+        background: white;
+        padding: 10px;
+      }
+      #map {
+        height: 100%;
+      }
+      .leaflet-container {
+        background: rgba(0, 0, 0, 0.8) !important;
+      }
+      h1 {
+        position: absolute;
+        background: black;
+        color: white;
+        padding: 10px;
+        font-weight: 200;
+        z-index: 10000;
+      }
+      #all-examples-info {
+        position: absolute;
+        background: white;
+        font-size: 16px;
+        padding: 20px;
+        top: 100px;
+        width: 350px;
+        line-height: 150%;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css"
+    />
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+    <script src="heatmap.js"></script>
+    <script src="leaflet-heatmap.js"></script>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      window.onload = function () {
+        var testData = {
+          max: 100,
+          data: [
+            { lat: 14.675886, lng: 77.593027, count: 0 },
+            { lat: 13.20488, lng: 79.097889, count: 12 },
+            { lat: 13.67, lng: 79.35, count: 3 },
+            { lat: 13.67, lng: 79.35, count: 47 },
+            { lat: 13.67, lng: 79.35, count: 34 },
+            { lat: 13.615387, lng: 79.40923, count: 91 },
+            { lat: 13.615387, lng: 79.40923, count: 48 },
+            { lat: 16.536107, lng: 80.594233, count: 46 },
+            { lat: 16.536107, lng: 80.594233, count: 24 },
+            { lat: 16.509717, lng: 80.612222, count: 66 },
+            { lat: 16.509717, lng: 80.612222, count: 52 },
+          ],
+        };
+
+        var baseLayer = L.tileLayer(
+          "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+          {
+            attribution:
+              'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a>',
+            maxZoom: 18
+          }
+        );
+
+        var cfg = {
+          // radius should be small ONLY if scaleRadius is true (or small radius is intended)
+          radius: 50,
+          gradient: {
+            0.05: "blue",
+            0.5: "green",
+            0.75: "yellow",
+            1.0: "red",
+          },
+          maxOpacity: 0.8,
+          minOpacity: 0.5,
+          useLocalExtrema: true,
+          latField: "lat",
+          lngField: "lng",
+          valueField: "count",
+        };
+
+        var heatmapLayer = new HeatmapOverlay(cfg);
+
+        var map = new L.Map("map", {
+          center: new L.LatLng(20.5937, 78.9629),
+          zoom: 10,
+          layers: [baseLayer, heatmapLayer],
+        });
+
+        heatmapLayer.setData(testData);
+
+        // make accessible for debugging
+        layer = heatmapLayer;
+      };
+    </script>
+  </body>
+</html>
